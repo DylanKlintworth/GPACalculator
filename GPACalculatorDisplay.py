@@ -38,6 +38,7 @@ class GPACalculatorDisplay:
         self.menu_system()
 
     def write_courses(self):
+        self.gpacalc.courses.clear()
         with open("grades.txt", mode='a', encoding='utf-8') as file:
             for i in self.gpacalc.courses:
                 course = i
