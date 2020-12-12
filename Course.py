@@ -1,5 +1,3 @@
-import pyinputplus
-
 class Course:
     
     def __init__(self, name, course_credits, grade):
