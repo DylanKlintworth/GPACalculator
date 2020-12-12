@@ -70,6 +70,9 @@ class GPACalculatorDisplay:
         print()
 
     def print_gpa(self):
+        if len(self.gpacalc.courses) == 0:
+            print("No courses have been added yet.")
+            self.menu_system()
         credits = self.gpacalc.get_course_credits()
         quality_points = self.gpacalc.get_quality_points()
         gpa = self.gpacalc.calculate_gpa()
