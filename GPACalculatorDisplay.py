@@ -24,6 +24,7 @@ class GPACalculatorDisplay:
             self.menu_system()
 
     def enter_courses(self):
+        self.gpacalc.courses.clear()
         isEntering = True
         while isEntering:
             print("Enter Course Details: Name, Credits, Grade (-1.0 for name to quit)")
@@ -38,15 +39,16 @@ class GPACalculatorDisplay:
         self.menu_system()
 
     def write_courses(self):
-        self.gpacalc.courses.clear()
         with open("grades.txt", mode='a', encoding='utf-8') as file:
             for i in self.gpacalc.courses:
                 course = i
                 name = str(course.get_name())
                 course_credits = str(course.get_course_credits())
                 grade = str(course.get_grade())
-                file.write(name+","+course_credits+","+grade+ "\n")
+                file.write(name+","+course_credits+","+grade+"\n")
         file.close()
+        self.gpacalc.courses.clear()
+
 
     def read_courses(self):
         self.gpacalc.courses.clear()
