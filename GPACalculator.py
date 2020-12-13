@@ -27,3 +27,5 @@ class GPACalculator:
         gpa = quality_points / course_credits
         return gpa
 
+
+

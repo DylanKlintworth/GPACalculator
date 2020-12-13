@@ -10,7 +10,7 @@ class GPACalculatorDisplay:
 
     def menu_input(self):
         print("Welcome to GPA Calculator!\n")
-        choice = pyinp.inputMenu(choices=['Enter Courses', 'View Courses', 'View GPA', 'Delete Courses', 'Quit'],
+        choice = pyinp.inputMenu(choices=['Enter Courses', 'View Courses', 'View GPA', 'Delete Courses', 'What if', 'Quit'],
                                  numbered=True)
         print()
         if choice == 'Enter Courses':
@@ -28,6 +28,10 @@ class GPACalculatorDisplay:
             self.read_courses()
             self.delete_courses()
             self.menu_system()
+        elif choice == 'What if':
+            self.read_courses()
+            self.print_cumulative_gpa(self.gpacalc.get_course_credits(), self.gpacalc.calculate_gpa())
+            self.menu_system()
         elif choice == 'Quit':
             print("Goodbye")
 
@@ -38,7 +42,7 @@ class GPACalculatorDisplay:
             name = input("Enter Course Name: ")
             if name == "-1":
                 break
-            course_credits = pyinp.inputFloat(prompt="Enter the course credits (ex. 3): ", min=1, max=4)
+            course_credits = pyinp.inputFloat(prompt="Enter the course credits (ex. 3): ", min=1, max=9)
             grade = pyinp.inputFloat(prompt="Enter the grade you received (ex. 4.0): ", min=0, max=4)
             course = Course(name, course_credits, grade)
             self.gpacalc.add_course(course)
@@ -87,8 +91,8 @@ class GPACalculatorDisplay:
         quality_points = self.gpacalc.get_quality_points()
         gpa = self.gpacalc.calculate_gpa()
         print(f"You have {quality_points} Quality Points and {credits} Course Credits \
-        \n\nGPA = Quality points ({quality_points}) / Course Credits ({credits}) = {gpa} \
-        \n\nYour GPA is {gpa}\n")
+        \n\nGPA = Quality points ({quality_points}) / Course Credits ({credits}) = {gpa:.3f} \
+        \n\nYour GPA is {gpa:.3f}\n")
 
     def delete_courses(self):
         print("Courses: ")
@@ -103,6 +107,26 @@ class GPACalculatorDisplay:
                 del self.gpacalc.courses[choice-1]
         self.write_courses()
         self.menu_system()
+
+    def print_cumulative_gpa(self, course_credits, grade):
+        cc = course_credits
+        g = grade
+        quality_points = cc * g
+        is_entering = True
+        temp = GPACalculator()
+        while is_entering:
+            print("Enter Course Details: Name, Credits, Grade (-1.0 for name to quit)")
+            name = input("Enter Course Name: ")
+            if name == "-1":
+                break
+            course_credits = pyinp.inputFloat(prompt="Enter the course credits (ex. 3): ", min=1, max=9)
+            grade = pyinp.inputFloat(prompt="Enter the grade you received (ex. 4.0): ", min=0, max=4)
+            course = Course(name, course_credits, grade)
+            temp.courses.append(course)
+        quality_points += temp.get_quality_points()
+        cc += temp.get_course_credits()
+        g = quality_points / cc
+        print(f"\n\nCumulative GPA would be {g:.3f}\n\n")
 
     def menu_system(self):
         self.menu_input()
