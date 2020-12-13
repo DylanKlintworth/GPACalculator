@@ -10,9 +10,11 @@ class GPACalculatorDisplay:
 
     def menu_input(self):
         print("Welcome to GPA Calculator!\n")
-        choice = pyinp.inputMenu(choices=['Enter Courses', 'View Courses', 'View GPA', 'Quit'], numbered=True)
+        choice = pyinp.inputMenu(choices=['Enter Courses', 'View Courses', 'View GPA', 'Delete Courses', 'Quit'],
+                                 numbered=True)
         print()
         if choice == 'Enter Courses':
+            self.read_courses()
             self.enter_courses()
         elif choice == 'View Courses':
             self.read_courses()
@@ -22,9 +24,14 @@ class GPACalculatorDisplay:
             self.read_courses()
             self.print_gpa()
             self.menu_system()
+        elif choice == 'Delete Courses':
+            self.read_courses()
+            self.delete_courses()
+            self.menu_system()
+        elif choice == 'Quit':
+            print("Goodbye")
 
     def enter_courses(self):
-        self.gpacalc.courses.clear()
         isEntering = True
         while isEntering:
             print("Enter Course Details: Name, Credits, Grade (-1.0 for name to quit)")
@@ -39,29 +46,32 @@ class GPACalculatorDisplay:
         self.menu_system()
 
     def write_courses(self):
-        with open("grades.txt", mode='a', encoding='utf-8') as file:
+        with open("grades.txt", mode='w', encoding='utf-8') as file:
             for i in self.gpacalc.courses:
                 course = i
                 name = str(course.get_name())
                 course_credits = str(course.get_course_credits())
                 grade = str(course.get_grade())
-                file.write(name+","+course_credits+","+grade+"\n")
+                file.write(name + "," + course_credits + "," + grade + "\n")
         file.close()
         self.gpacalc.courses.clear()
-
 
     def read_courses(self):
         self.gpacalc.courses.clear()
-        with open("grades.txt", mode='r', encoding='utf-8') as file:
-            lines = file.readlines()
-            for i in lines:
-                course_info = i.split(',')
-                name = course_info[0]
-                course_credits = float(course_info[1])
-                grade = float(course_info[2])
-                course = Course(name, course_credits, grade)
-                self.gpacalc.add_course(course)
-        file.close()
+        try:
+            with open("grades.txt", mode='r+', encoding='utf-8') as file:
+                lines = file.readlines()
+                for i in lines:
+                    course_info = i.split(',')
+                    name = course_info[0]
+                    course_credits = float(course_info[1])
+                    grade = float(course_info[2])
+                    course = Course(name, course_credits, grade)
+                    self.gpacalc.add_course(course)
+            file.close()
+        except FileNotFoundError:
+            print("Courses not found. Please enter Courses.")
+            self.menu_system()
 
     def print_courses(self):
         print("Courses:\n")
@@ -79,6 +89,20 @@ class GPACalculatorDisplay:
         print(f"You have {quality_points} Quality Points and {credits} Course Credits \
         \n\nGPA = Quality points ({quality_points}) / Course Credits ({credits}) = {gpa} \
         \n\nYour GPA is {gpa}\n")
+
+    def delete_courses(self):
+        print("Courses: ")
+        isEntering = True
+        while isEntering:
+            for i in range(len(self.gpacalc.courses)):
+                print(str(i+1) + ") " + f"{self.gpacalc.courses[i].get_name()}")
+            choice = pyinp.inputNum(min=-1, max=len(self.gpacalc.courses))
+            if choice == -1:
+                break
+            else:
+                del self.gpacalc.courses[choice-1]
+        self.write_courses()
+        self.menu_system()
 
     def menu_system(self):
         self.menu_input()
